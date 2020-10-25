@@ -1,0 +1,18 @@
+{
+  "name": "hal-automation",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "repository": "https://github.com/wazho/hal-automation",
+  "author": "Ze-Hao Wang (Salmon)",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^14.14.3",
+    "@types/node-fetch": "^2.5.7",
+    "typescript": "^4.0.3"
+  },
+  "dependencies": {
+    "delay": "^4.4.0",
+    "node-fetch": "^2.6.1",
+    "ts-node": "^9.0.0"
+  }
+}
