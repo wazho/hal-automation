@@ -1,100 +1,58 @@
 // Node modules.
-import fetch from 'node-fetch';
+import _ from 'lodash';
 import delay from 'delay';
-
-const host = 'https://gateway.live-a-hero.jp';
+// Local modules.
+import HeroAPI from './heroAPI';
 
 // Secret parmeters.
-const userKey = String(process.env.USER_KEY);
-const supportPlayerId = Number(process.env.SUPPORT_PLAYER_ID);
-const supportCardId = Number(process.env.SUPPORT_CARD_ID);
+const userKeys = String(process.env.USER_KEYS).split(',');
+const supportPlayerIds = String(process.env.SUPPORT_PLAYER_IDS).split(',').map(Number);
+const supportCardIds = String(process.env.SUPPORT_CARD_IDS).split(',').map(Number);
 const questId = Number(process.env.QUEST_ID);
 
-const basedHeaders = {
-  'Host': 'gateway.live-a-hero.jp',
-  'Accept': '*/*',
-  'Accept-Encoding': 'gzip, deflate',
-  'User-Agent': 'LiveAHeroAPI/1.0.4 Android OS 7.1.2 / API-25 (N2G48H/rel.se.infra.20200730.150525) google G011A',
-  'user-identifier': userKey,
-  'X-Unity-Version': '2019.4.10f1',
-  'Connection': 'close',
+const delayRange = (min: number, max: number) => {
+  const range = _.range(min, max, 0.1);
+  const seconds = _.sample(range)!;
+  return delay(seconds * 1000);
 };
 
 (async () => {
-  await fetch(`${host}/api/user/login`, {
-    method: 'GET',
-    headers: basedHeaders,
-  });
+  const appVersion = await HeroAPI.getAppVersion();
 
-  console.log('Login');
-  await delay(5 * 1000);
+  if (!appVersion) {
+    console.error('Cannot connect to server');
+    process.exit(0);
+  }
 
-  await fetch(`${host}/api/quest/start`, {
-    method: 'POST',
-    headers: {
-      ...basedHeaders,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ questId }),
-  });
+  await Promise.all(userKeys.map(async (userKey) => {
+    // Select a supporter randomly.
+    const randomIndex = _.sample(_.range(supportPlayerIds.length))!;
+    const supportPlayerId = supportPlayerIds[randomIndex];
+    const supportCardId = supportCardIds[randomIndex];
 
-  console.log('Quest start');
-  await delay(2 * 1000);
+    const client = new HeroAPI(appVersion, userKey);
 
-  await fetch(`${host}/api/quest/event/progress`, {
-    method: 'POST',
-    headers: {
-      ...basedHeaders,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      questId,
-      team: {
-        teamType: 0,
-        teamId: 1,
-        supportPosition: 1,
-        supportPlayerId,
-        supportType: 1,
-        supportCardId,
-        positions: null,
-      }
-    }),
-  });
+    // Delay 0 ~ 5 mins.
+    // Make instances be triggered in different time.
+    await delayRange(0, 5 * 60);
 
-  console.log('Progress init');
-  await delay(10 * 1000);
+    await client.login();
+    console.log('Login');
+    await delayRange(5, 10);
 
-  await fetch(`${host}/api/quest/event/progress`, {
-    method: 'POST',
-    headers: {
-      ...basedHeaders,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      questId,
-      battleResult: {
-        isWin: true,
-        enemies: [
-          { nowHp: 0, positionId: 0 },
-          { nowHp: 0, positionId: 1 },
-          { nowHp: 0, positionId: 2 },
-          { nowHp: 0, positionId: 3 },
-        ]
-      }
-    }),
-  });
+    await client.questStart(questId);
+    console.log('Quest start');
+    await delayRange(5, 10);
 
-  console.log('Progress report');
-  await delay(1 * 1000);
+    await client.questProgressInit(questId, supportPlayerId, supportCardId);
+    console.log('Progress init');
+    await delayRange(10, 20);
 
-  await fetch(`${host}/api/quest/end`, {
-    method: 'POST',
-    headers: {
-      ...basedHeaders,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ questId }),
-  });
+    await client.questProgressFinish(questId);
+    console.log('Progress finish');
+    await delayRange(1, 2);
 
-  console.log('Quest end');
+    await client.questEnd(questId);
+    console.log('Quest end');
+  }));
 })();
