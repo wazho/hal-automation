@@ -1,5 +1,4 @@
-name: deploy gh-pages
-
+name: auto launch
 on:
   push:
     branches:
@@ -7,7 +6,6 @@ on:
   schedule:
     # At minute 0 and 30.
     - cron: '0,30 * * * *'
-
 jobs:
   build:
     name: Build and deploy gh-pages
@@ -21,14 +19,14 @@ jobs:
       matrix:
         node-version: [12.x]
     steps:
-    - uses: actions/checkout@v1
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: yarn install
-      run: |
-        yarn install
-    - name: Launch program
-      run: |
-        npx ts-node src/index.ts
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Installation
+        run: |
+          yarn install
+      - name: Launch program
+        run: |
+          npx ts-node src/index.ts
