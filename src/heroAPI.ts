@@ -22,9 +22,14 @@ class HeroAPI {
       method: 'GET',
       headers: { 'User-Agent': 'LiveAHeroAPI' },
     });
-    const data = await res.json();
-    console.log(data);
-    return data.client as string;
+
+    if (res.ok) {
+      const data = await res.json();
+      console.log('app version', data);
+      return data.client as string;
+    } else {
+      return undefined;
+    }
   }
 
   public async login() {
@@ -33,7 +38,15 @@ class HeroAPI {
       headers: this.basedHeaders,
     });
     const data = await res.json();
-    // console.log(data);
+    return data;
+  }
+
+  public async getFriends() {
+    const res = await fetch(`${HeroAPI.host}/api/friend/get`, {
+      method: 'GET',
+      headers: this.basedHeaders,
+    });
+    const data = await res.json();
     return data;
   }
 
@@ -47,7 +60,6 @@ class HeroAPI {
       body: JSON.stringify({ questId }),
     });
     const data = await res.json();
-    // console.log(data);
     return data;
   }
 
@@ -72,7 +84,6 @@ class HeroAPI {
       }),
     });
     const data = await res.json();
-    // console.log(data);
     return data;
   }
 
@@ -97,7 +108,6 @@ class HeroAPI {
       }),
     });
     const data = await res.json();
-    // console.log(data);
     return data;
   }
 
@@ -111,7 +121,18 @@ class HeroAPI {
       body: JSON.stringify({ questId }),
     });
     const data = await res.json();
-    // console.log(data);
+    return data;
+  }
+
+  public async receiveMails() {
+    const res = await fetch(`${HeroAPI.host}/api/mission/end/all`, {
+      method: 'POST',
+      headers: {
+        ...this.basedHeaders,
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await res.json();
     return data;
   }
 }
