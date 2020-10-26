@@ -3,10 +3,9 @@ on:
   push:
     branches:
       - main
-  # FIXME:
-  # schedule:
-  #   # At minute 0 and 30.
-  #   - cron: '0,30 * * * *'
+  schedule:
+    # At minute 0 and 30.
+    - cron: '0,30 * * * *'
 jobs:
   build:
     name: automation
