@@ -10,9 +10,7 @@ jobs:
   build:
     name: automation
     env:
-      USER_KEY: ${{secrets.user_key}}
-      SUPPORT_PLAYER_ID: ${{secrets.support_player_id}}
-      SUPPORT_CARD_ID: ${{secrets.support_card_id}}
+      USER_KEYS: ${{secrets.user_keys}}
       QUEST_ID: ${{secrets.quest_id}}
     runs-on: ubuntu-latest
     strategy:
