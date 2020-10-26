@@ -24,11 +24,11 @@ const delayRange = (min: number, max: number) => {
     process.exit(0);
   }
 
-  await Promise.all(userKeys.map(async (userKey) => {
+  await Promise.all(userKeys.map(async (userKey, userIndex) => {
     // Select a supporter randomly.
-    const randomIndex = _.sample(_.range(supportPlayerIds.length))!;
-    const supportPlayerId = supportPlayerIds[randomIndex];
-    const supportCardId = supportCardIds[randomIndex];
+    const supportIndex = _.sample(_.range(supportPlayerIds.length))!;
+    const supportPlayerId = supportPlayerIds[supportIndex];
+    const supportCardId = supportCardIds[supportIndex];
 
     const client = new HeroAPI(appVersion, userKey);
 
@@ -37,22 +37,22 @@ const delayRange = (min: number, max: number) => {
     await delayRange(0, 5 * 60);
 
     await client.login();
-    console.log('Login');
+    console.log(`[User: ${userIndex}] Login`);
     await delayRange(5, 10);
 
     await client.questStart(questId);
-    console.log('Quest start');
+    console.log(`[User: ${userIndex}] Quest start`);
     await delayRange(5, 10);
 
     await client.questProgressInit(questId, supportPlayerId, supportCardId);
-    console.log('Progress init');
+    console.log(`[User: ${userIndex}] Progress init (support: ${supportIndex})`);
     await delayRange(10, 20);
 
     await client.questProgressFinish(questId);
-    console.log('Progress finish');
+    console.log(`[User: ${userIndex}] Progress finish`);
     await delayRange(1, 2);
 
     await client.questEnd(questId);
-    console.log('Quest end');
+    console.log(`[User: ${userIndex}] Quest end`);
   }));
 })();

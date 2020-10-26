@@ -22,8 +22,9 @@ class HeroAPI {
       method: 'GET',
       headers: { 'User-Agent': 'LiveAHeroAPI' },
     });
-    const { client } = await res.json();
-    return client as string;
+    const data = await res.json();
+    console.log(data);
+    return data.client as string;
   }
 
   public async login() {
@@ -32,7 +33,7 @@ class HeroAPI {
       headers: this.basedHeaders,
     });
     const data = await res.json();
-    console.log(data);
+    // console.log(data);
     return data;
   }
 
@@ -46,7 +47,7 @@ class HeroAPI {
       body: JSON.stringify({ questId }),
     });
     const data = await res.json();
-    console.log(data);
+    // console.log(data);
     return data;
   }
 
@@ -71,7 +72,7 @@ class HeroAPI {
       }),
     });
     const data = await res.json();
-    console.log(data);
+    // console.log(data);
     return data;
   }
 
@@ -96,7 +97,7 @@ class HeroAPI {
       }),
     });
     const data = await res.json();
-    console.log(data);
+    // console.log(data);
     return data;
   }
 
@@ -110,7 +111,7 @@ class HeroAPI {
       body: JSON.stringify({ questId }),
     });
     const data = await res.json();
-    console.log(data);
+    // console.log(data);
     return data;
   }
 }
