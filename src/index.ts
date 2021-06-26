@@ -7,6 +7,7 @@ import HeroAPI from './heroAPI';
 // Secret parmeters.
 const userKeys = String(process.env.USER_KEYS).split(',');
 const questId = Number(process.env.QUEST_ID);
+const salesId = Number(process.env.SALES_ID);
 const skipFirstDelay = !!process.env.SKIP_FIRST_DELAY;
 
 const delayRange = (min: number, max: number, user: any) => {
@@ -40,12 +41,6 @@ const delayRange = (min: number, max: number, user: any) => {
     const { userList: { friendList } } = await client.getFriends();
     const supporter = _.sample(friendList)!;
 
-    // 10% rate to receive mails.
-    if (_.sample(_.range(10))! === 0) {
-      await client.receiveMails();
-      await delayRange(5, 10, userIndex);
-    }
-
     await client.questStart(questId);
     console.log(`[User: ${userIndex}] Quest start`);
     await delayRange(5, 10, userIndex);
@@ -58,9 +53,24 @@ const delayRange = (min: number, max: number, user: any) => {
     console.log(`[User: ${userIndex}] Progress finish`);
     await delayRange(1, 2, userIndex);
 
+    // 50% rate to do sales.
+    if (_.sample(_.range(50))! === 0) {
+      await client.salesEnd(1);
+      await delayRange(5, 10, userIndex);
+
+      await client.salesStart(salesId, [100111]);
+      await delayRange(5, 10, userIndex);
+    }
+
+    // 20% rate to receive mission rewards.
+    if (_.sample(_.range(10))! === 0) {
+      await client.receiveMissionRewards();
+      await delayRange(5, 10, userIndex);
+    }
+
     try {
-      await client.questEnd(questId);
-      console.log(`[User: ${userIndex}] Quest end`);
+      const result = await client.questEnd(questId);
+      console.log(`[User: ${userIndex}] Quest end`, JSON.stringify(result));
     } catch {
       console.log(`[User: ${userIndex}] Stamina is not enough`);
     }

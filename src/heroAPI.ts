@@ -124,7 +124,37 @@ class HeroAPI {
     return data;
   }
 
-  public async receiveMails() {
+  public async salesStart(salesId: number, members: number[]) {
+    const res = await fetch(`${HeroAPI.host}/api/sales/start`, {
+      method: 'POST',
+      headers: {
+        ...this.basedHeaders,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        salesId,
+        slotId: 1,
+        member: members,
+      }),
+    });
+    const data = await res.json();
+    return data;
+  }
+
+  public async salesEnd(slotId: number) {
+    const res = await fetch(`${HeroAPI.host}/api/sales/end`, {
+      method: 'POST',
+      headers: {
+        ...this.basedHeaders,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ slotId }),
+    });
+    const data = await res.json();
+    return data;
+  }
+
+  public async receiveMissionRewards() {
     const res = await fetch(`${HeroAPI.host}/api/mission/end/all`, {
       method: 'POST',
       headers: {
