@@ -60,26 +60,29 @@ const probability = (percent: number): boolean => {
     console.log(`[User: ${userIndex}] Progress finish`);
     await delayRange(1, 2, userIndex);
 
+    try {
+      const result = await client.questEnd(questId);
+      console.log(`[User: ${userIndex}] Quest end`, JSON.stringify(result));
+    } catch {
+      console.log(`[User: ${userIndex}] Stamina is not enough`);
+    }
+    
     // 50% rate to do sales.
     if (probability(50)) {
-      await client.salesEnd(1);
+      const salesEndRes = await client.salesEnd(1);
+      console.log(`[User: ${userIndex}] End sales`, JSON.stringify(salesEndRes));
       await delayRange(5, 10, userIndex);
 
-      await client.salesStart(salesId, [100111]);
+      const salesStartRes = await client.salesStart(salesId, [100111]);
+      console.log(`[User: ${userIndex}] Start sales`, JSON.stringify(salesStartRes));
       await delayRange(5, 10, userIndex);
     }
 
     // 20% rate to receive mission rewards.
     if (probability(20)) {
       await client.receiveMissionRewards();
+      console.log(`[User: ${userIndex}] Receive mission rewards`);
       await delayRange(5, 10, userIndex);
-    }
-
-    try {
-      const result = await client.questEnd(questId);
-      console.log(`[User: ${userIndex}] Quest end`, JSON.stringify(result));
-    } catch {
-      console.log(`[User: ${userIndex}] Stamina is not enough`);
     }
   }));
 })();
