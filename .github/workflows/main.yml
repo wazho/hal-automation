@@ -12,6 +12,7 @@ jobs:
     env:
       USER_KEYS: ${{secrets.user_keys}}
       QUEST_ID: ${{secrets.quest_id}}
+      SALES_ID: ${{secrets.sales_id}}
     runs-on: ubuntu-latest
     strategy:
       matrix:
