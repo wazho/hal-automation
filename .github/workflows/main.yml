@@ -6,13 +6,18 @@ on:
   schedule:
     # At minute 0 and 30.
     - cron: '0,30 * * * *'
+  workflow_dispatch:
+    inputs:
+      quest_id:
+        description: 'https://github.com/liveahero-community/translations/blob/main/master-data/latest/ja-JP/QuestMaster.json'     
+        required: true
 jobs:
   build:
     name: automation
     env:
-      USER_KEYS: ${{secrets.user_keys}}
-      QUEST_ID: ${{secrets.quest_id}}
-      SALES_ID: ${{secrets.sales_id}}
+      USER_KEYS: ${{ secrets.user_keys }}
+      QUEST_ID: ${{ github.event.inputs.quest_id || secrets.quest_id }}
+      SALES_ID: ${{ secrets.sales_id }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
