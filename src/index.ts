@@ -17,6 +17,13 @@ const delayRange = (min: number, max: number, user: any) => {
   return delay(seconds * 1000);
 };
 
+const probability = (percent: number): boolean => {
+  const all = _.range(100);
+  const randomPick = _.sample(all)!;
+  const pass = randomPick < percent;
+  return pass;
+};
+
 (async () => {
   const appVersion = await HeroAPI.getAppVersion();
 
@@ -54,7 +61,7 @@ const delayRange = (min: number, max: number, user: any) => {
     await delayRange(1, 2, userIndex);
 
     // 50% rate to do sales.
-    if (_.sample(_.range(50))! === 0) {
+    if (probability(50)) {
       await client.salesEnd(1);
       await delayRange(5, 10, userIndex);
 
@@ -63,7 +70,7 @@ const delayRange = (min: number, max: number, user: any) => {
     }
 
     // 20% rate to receive mission rewards.
-    if (_.sample(_.range(10))! === 0) {
+    if (probability(20)) {
       await client.receiveMissionRewards();
       await delayRange(5, 10, userIndex);
     }

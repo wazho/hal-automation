@@ -137,8 +137,12 @@ class HeroAPI {
         member: members,
       }),
     });
-    const data = await res.json();
-    return data;
+
+    if (res.ok) {
+      const data = await res.json();
+      return data;
+    }
+    return null;
   }
 
   public async salesEnd(slotId: number) {
@@ -150,8 +154,12 @@ class HeroAPI {
       },
       body: JSON.stringify({ slotId }),
     });
-    const data = await res.json();
-    return data;
+
+    if (res.ok) {
+      const data = await res.json();
+      return data;
+    }
+    return null;
   }
 
   public async receiveMissionRewards() {
