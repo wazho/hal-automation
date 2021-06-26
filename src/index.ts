@@ -33,7 +33,7 @@ const probability = (percent: number): boolean => {
   }
 
   await Promise.all(userKeys.map(async (userKey, userIndex) => {
-    const client = new HeroAPI(appVersion, userKey);
+    const client = new HeroAPI(appVersion);
 
     // Delay 0 ~ 5 mins.
     // Make instances be triggered in different time.
@@ -41,7 +41,7 @@ const probability = (percent: number): boolean => {
       await delayRange(0, 5 * 60, userIndex);
     }
 
-    const { cards } = await client.login();
+    const { cards } = await client.login(userKey);
     console.log(`[User: ${userIndex}] Login`);
     await delayRange(5, 10, userIndex);
 

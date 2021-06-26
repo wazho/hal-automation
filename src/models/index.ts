@@ -14,6 +14,21 @@ export interface Card {
   };
 }
 
+export interface Message {
+  id: number;
+  subject: string;
+  body: string;
+  receiveLimitAt: string | null;
+  receivedAt: string | null;
+  reward: {
+    rewardType: number;
+    objectId: number;
+    objectValue: number;
+    bonus: number;
+    fixAddValue: number;
+  }
+}
+
 export interface LoginUsers {
   profile: {
     playerId: number;
@@ -32,6 +47,9 @@ export interface LoginUsers {
   }
   cards: {
     [cardId: string]: Card;
+  }
+  messages: {
+    [messageId: string]: Message;
   }
   [key: string]: any;
 }

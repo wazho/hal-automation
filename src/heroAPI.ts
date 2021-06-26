@@ -2,18 +2,20 @@
 import fetch from 'node-fetch';
 // Local modules.
 import type { LoginUsers } from './models/index';
+import type { ICreateUserResponse } from './models/user';
+import type { IReceiveAllMessagesResponse } from './models/message';
+import type { IGetGochaListResponse, IExecuteGochaResponse } from './models/gocha';
 
 class HeroAPI {
   private static host = 'https://gateway.live-a-hero.jp';
   private basedHeaders: any;
 
-  constructor(appVersion: string, userKey: string) {
+  constructor(appVersion: string) {
     this.basedHeaders = {
       'Host': 'gateway.live-a-hero.jp',
       'Accept': '*/*',
       'Accept-Encoding': 'gzip, deflate',
       'User-Agent': `LiveAHeroAPI/${appVersion} Android OS 7.1.2 / API-25 (N2G48H/rel.se.infra.20200730.150525) google G011A`,
-      'user-identifier': userKey,
       'X-Unity-Version': '2019.4.10f1',
       'Connection': 'close',
     };
@@ -34,14 +36,52 @@ class HeroAPI {
     }
   }
 
-  public async login() {
+  public async createUser(playerName: string): Promise<ICreateUserResponse> {
+    const res = await fetch(`${HeroAPI.host}/api/user/create`, {
+      method: 'POST',
+      headers: {
+        ...this.basedHeaders,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        playerName,
+        bodyTypeId: 1,
+        voiceTypeId: 2,
+        genderId: 1,
+      }),
+    });
+
+    const data: ICreateUserResponse = await res.json();
+
+    return data;
+  }
+
+  public async login(userKey: string): Promise<LoginUsers> {
+    this.basedHeaders['user-identifier'] = userKey;
+
     const res = await fetch(`${HeroAPI.host}/api/user/login`, {
       method: 'GET',
       headers: this.basedHeaders,
     });
-    const data = await res.json();
-    const { loginUsers } = data as { loginUsers: LoginUsers };
+
+    const { loginUsers }: { loginUsers: LoginUsers } = await res.json();
+
     return loginUsers;
+  }
+
+  public async setUserTutotialFlag(tutorialFlag: number): Promise<any> {
+    const res = await fetch(`${HeroAPI.host}/api/user/tutorial/flag/set`, {
+      method: 'POST',
+      headers: {
+        ...this.basedHeaders,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ tutorialFlag }),
+    });
+
+    const data = await res.json();
+
+    return data;
   }
 
   public async getFriends() {
@@ -174,6 +214,50 @@ class HeroAPI {
       },
     });
     const data = await res.json();
+    return data;
+  }
+
+  public async receiveAllMessages(messageIds: number[]): Promise<IReceiveAllMessagesResponse> {
+    const res = await fetch(`${HeroAPI.host}/api/message/receive/all`, {
+      method: 'POST',
+      headers: {
+        ...this.basedHeaders,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ messageIds }),
+    });
+
+    const data: IReceiveAllMessagesResponse = await res.json();
+
+    return data;
+  }
+
+  public async getGachaList(): Promise<IGetGochaListResponse> {
+    const res = await fetch(`${HeroAPI.host}/api/gacha/list`, {
+      method: 'GET',
+      headers: this.basedHeaders,
+    });
+
+    const data: IGetGochaListResponse = await res.json();
+
+    return data;
+  }
+
+  public async executeGacha(gachaId: number, priceId: number): Promise<IExecuteGochaResponse> {
+    const res = await fetch(`${HeroAPI.host}/api/gacha/execute`, {
+      method: 'POST',
+      headers: {
+        ...this.basedHeaders,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        gachaId,
+        priceId,
+      }),
+    });
+
+    const data: IExecuteGochaResponse = await res.json();
+
     return data;
   }
 }
