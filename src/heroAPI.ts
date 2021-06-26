@@ -1,5 +1,7 @@
 // Node modules.
 import fetch from 'node-fetch';
+// Local modules.
+import type { LoginUsers } from './models/index';
 
 class HeroAPI {
   private static host = 'https://gateway.live-a-hero.jp';
@@ -38,7 +40,8 @@ class HeroAPI {
       headers: this.basedHeaders,
     });
     const data = await res.json();
-    return data;
+    const { loginUsers } = data as { loginUsers: LoginUsers };
+    return loginUsers;
   }
 
   public async getFriends() {

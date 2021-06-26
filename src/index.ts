@@ -41,7 +41,7 @@ const probability = (percent: number): boolean => {
       await delayRange(0, 5 * 60, userIndex);
     }
 
-    await client.login();
+    const { cards } = await client.login();
     console.log(`[User: ${userIndex}] Login`);
     await delayRange(5, 10, userIndex);
 
@@ -73,7 +73,8 @@ const probability = (percent: number): boolean => {
       console.log(`[User: ${userIndex}] End sales`, JSON.stringify(salesEndRes));
       await delayRange(5, 10, userIndex);
 
-      const salesStartRes = await client.salesStart(salesId, [100111]);
+      const [member] = _.shuffle(Object.values(cards));
+      const salesStartRes = await client.salesStart(salesId, [member.heroCardId]);
       console.log(`[User: ${userIndex}] Start sales`, JSON.stringify(salesStartRes));
       await delayRange(5, 10, userIndex);
     }
