@@ -94,7 +94,7 @@ class HeroAPI {
   }
 
   public async questStart(questId: number) {
-    const res = await fetch(`${HeroAPI.host}/api/quest/start`, {
+    await fetch(`${HeroAPI.host}/api/quest/retire`, {
       method: 'POST',
       headers: {
         ...this.basedHeaders,
@@ -102,12 +102,28 @@ class HeroAPI {
       },
       body: JSON.stringify({ questId }),
     });
-    const data = await res.json();
-    return data;
+
+    await fetch(`${HeroAPI.host}/api/quest/start`, {
+      method: 'POST',
+      headers: {
+        ...this.basedHeaders,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ questId }),
+    });
   }
 
   public async questProgressInit(questId: number, supportPlayerId: number, supportCardId: number) {
-    const res = await fetch(`${HeroAPI.host}/api/quest/event/progress`, {
+    await fetch(`${HeroAPI.host}/api/quest/event/progress`, {
+      method: 'POST',
+      headers: {
+        ...this.basedHeaders,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ questId }),
+    });
+
+    await fetch(`${HeroAPI.host}/api/quest/event/progress`, {
       method: 'POST',
       headers: {
         ...this.basedHeaders,
@@ -126,12 +142,10 @@ class HeroAPI {
         }
       }),
     });
-    const data = await res.json();
-    return data;
   }
 
   public async questProgressFinish(questId: number) {
-    const res = await fetch(`${HeroAPI.host}/api/quest/event/progress`, {
+    await fetch(`${HeroAPI.host}/api/quest/event/progress`, {
       method: 'POST',
       headers: {
         ...this.basedHeaders,
@@ -150,8 +164,15 @@ class HeroAPI {
         }
       }),
     });
-    const data = await res.json();
-    return data;
+
+    await fetch(`${HeroAPI.host}/api/quest/event/progress`, {
+      method: 'POST',
+      headers: {
+        ...this.basedHeaders,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ questId }),
+    });
   }
 
   public async questEnd(questId: number) {
